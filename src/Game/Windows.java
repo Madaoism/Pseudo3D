@@ -1,4 +1,4 @@
-package Game;
+package game;
 
 import org.lwjgl.*;
 import org.lwjgl.glfw.*;
@@ -51,7 +51,7 @@ public class Windows {
 		glfwDefaultWindowHints(); // optional, the current window hints are already the default
 		
 		// the window will stay hidden after creation. The window will become visible after its ready
-		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); 
+		glfwWindowHint( GLFW_VISIBLE, GLFW_FALSE); 
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
 
 		// Create the window
