@@ -1,14 +1,31 @@
 package game;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
-import static org.lwjgl.glfw.GLFW.glfwGetKey;
-import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.GLFW_FALSE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
 import static org.lwjgl.glfw.GLFW.GLFW_TRUE;
 import static org.lwjgl.glfw.GLFW.GLFW_VISIBLE;
+import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
+import static org.lwjgl.glfw.GLFW.glfwDefaultWindowHints;
+import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
+import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
+import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
+import static org.lwjgl.glfw.GLFW.glfwGetWindowSize;
+import static org.lwjgl.glfw.GLFW.glfwInit;
+import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
+import static org.lwjgl.glfw.GLFW.glfwPollEvents;
+import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
+import static org.lwjgl.glfw.GLFW.glfwShowWindow;
+import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
+import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
+import static org.lwjgl.glfw.GLFW.glfwTerminate;
+import static org.lwjgl.glfw.GLFW.glfwWindowHint;
+import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;
@@ -24,6 +41,8 @@ import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
 
+import event.KeyHandler;
+
 // Code source at https://www.lwjgl.org/guide
 // GLFW is an open source library for OpenGL, OpenGL ES and Vulkan
 // It provides a simple API for creating windows, contexts and surfaces
@@ -35,7 +54,8 @@ public class windows_glfw {
 	private double ups = 30;
 	private double millisecPerUpdate = 1000/ups;
 	private boolean vsyncOn = false;
-	private final String fontPath = "assets/ARCADECLASSIC.TTF";
+	private KeyHandler keyHandler;
+	//private final String fontPath = "assets/ARCADECLASSIC.TTF";
 	
 	private long window;
 	
@@ -112,6 +132,8 @@ public class windows_glfw {
 
 		// Make the window visible
 		glfwShowWindow(window);
+		
+		keyHandler = new KeyHandler(window);
 	}
 	
 	public void loop() {
@@ -143,13 +165,7 @@ public class windows_glfw {
 			prev = start;
 			steps += elapsed;
 			
-			if (isKeyPressed(GLFW_KEY_ENTER)) {
-				glClearColor((float) Math.random(), 
-						(float) Math.random(),
-						(float) Math.random(),
-						(float) Math.random());
-			}
-			
+			keyHandler.update();
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 			glfwSwapBuffers(window); // swap the color buffers
 
@@ -197,10 +213,6 @@ public class windows_glfw {
 	// Get current time in milliseconds
 	private double getTime() {
 		return System.currentTimeMillis();
-	}
-	
-	private boolean isKeyPressed( int keyCode ){ 
-		return glfwGetKey(window, keyCode) == GLFW_PRESS;
 	}
 
 	public static void main(String[] args) {
