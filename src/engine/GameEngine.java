@@ -38,7 +38,6 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
 
 import event.KeyHandler;
-import game.Renderer;
 
 public class GameEngine {
 
