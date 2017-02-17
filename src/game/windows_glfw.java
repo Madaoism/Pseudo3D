@@ -1,29 +1,48 @@
 package game;
 
-import org.lwjgl.*;
-import org.lwjgl.glfw.*;
-import org.lwjgl.opengl.*;
-import org.lwjgl.system.*;
-
-import java.nio.*;
-
-import static org.lwjgl.glfw.Callbacks.*;
+import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
+import static org.lwjgl.glfw.GLFW.glfwGetKey;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.system.MemoryStack.*;
-import static org.lwjgl.system.MemoryUtil.*;
+import static org.lwjgl.glfw.GLFW.GLFW_FALSE;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
+import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
+import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
+import static org.lwjgl.glfw.GLFW.GLFW_TRUE;
+import static org.lwjgl.glfw.GLFW.GLFW_VISIBLE;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glClearColor;
+import static org.lwjgl.system.MemoryStack.stackPush;
+import static org.lwjgl.system.MemoryUtil.NULL;
+
+import java.nio.IntBuffer;
+
+import org.lwjgl.Version;
+import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.system.MemoryStack;
 
 // Code source at https://www.lwjgl.org/guide
 // GLFW is an open source library for OpenGL, OpenGL ES and Vulkan
 // It provides a simple API for creating windows, contexts and surfaces
 
-public class Windows {
+public class windows_glfw {
+	
+	private double fps = 60;	
+	private double millisecPerFrame = 1000/fps;
+	private double ups = 30;
+	private double millisecPerUpdate = 1000/ups;
+	private boolean vsyncOn = false;
+	private final String fontPath = "assets/ARCADECLASSIC.TTF";
 	
 	private long window;
 	
 	public void run() {
 		System.out.println("Hello LWJGL" + Version.getVersion() + "!");
 		
+		// main program logics are here
 		init();
 		loop();
 		
@@ -51,7 +70,7 @@ public class Windows {
 		glfwDefaultWindowHints(); // optional, the current window hints are already the default
 		
 		// the window will stay hidden after creation. The window will become visible after its ready
-		glfwWindowHint( GLFW_VISIBLE, GLFW_FALSE); 
+		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); 
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
 
 		// Create the window
@@ -87,13 +106,22 @@ public class Windows {
 		// Make the OpenGL context current
 		glfwMakeContextCurrent(window);
 		// Enable v-sync
-		glfwSwapInterval(1);
+		if ( vsyncOn ) {
+			glfwSwapInterval(1);
+		}
 
 		// Make the window visible
 		glfwShowWindow(window);
 	}
 	
 	public void loop() {
+		
+		double start;
+		double prev = getTime();
+		double steps = 0.0;
+		double elapsed;
+		long currentFrameRate;
+		
 		// This line is critical for LWJGL's interoperation with GLFW's
 		// OpenGL context, or any context that is managed externally.
 		// LWJGL detects the context that is current in the current thread,
@@ -102,23 +130,81 @@ public class Windows {
 		GL.createCapabilities();
 
 		// Set the clear color
-		glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
+		glClearColor(.5f, 1.0f, 0.05f, 0.0f);
 
 		// Run the rendering loop until the user has attempted to close
 		// the window or has pressed the ESCAPE key.
 		while ( !glfwWindowShouldClose(window) ) {
+			
+			// offset time
+			start = getTime();
+			elapsed = start - prev;
+			currentFrameRate = (long) (1000/elapsed);
+			prev = start;
+			steps += elapsed;
+			
+			if (isKeyPressed(GLFW_KEY_ENTER)) {
+				glClearColor((float) Math.random(), 
+						(float) Math.random(),
+						(float) Math.random(),
+						(float) Math.random());
+			}
+			
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
-
 			glfwSwapBuffers(window); // swap the color buffers
 
 			// Poll for window events. The key callback above will only be
 			// invoked during this call.
-			glfwPollEvents();
+			glfwPollEvents();			
+			
+			// handleInput();
+			// sleep(start + millisecPerFrame - getTime());
+			while (steps >= millisecPerUpdate) {
+				// updateGameState();
+				steps -= millisecPerUpdate;
+			}
+			
+			//render();
+			sync(start);
+			System.out.println("fps: " + currentFrameRate);
 		}
 	}
 	
+	// Sync frame rate with update rate
+	private void sync(double loopStartTime) {
+		double loopslot = millisecPerFrame;
+		double endTime = loopStartTime + loopslot;
+		while (getTime() < endTime) {
+			try {
+				Thread.sleep(1);
+			} 
+			catch (InterruptedException e) {
+				Thread.currentThread().interrupt(); 
+			}
+		}
+	}
+
+	// Cause program to pause
+//	private void sleep(double d) {
+//		try {
+//			Thread.sleep((long) d);
+//		} catch (InterruptedException e) {
+//			Thread.currentThread().interrupt();
+//			return;
+//		}
+//	}
+
+	// Get current time in milliseconds
+	private double getTime() {
+		return System.currentTimeMillis();
+	}
+	
+	private boolean isKeyPressed( int keyCode ){ 
+		return glfwGetKey(window, keyCode) == GLFW_PRESS;
+	}
+
 	public static void main(String[] args) {
-		new Windows().run();
+		new windows_glfw().run();
 	}
 	
 }
