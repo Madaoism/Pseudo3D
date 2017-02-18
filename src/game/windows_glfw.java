@@ -8,11 +8,14 @@ import engine.GameEngine;
 
 public class windows_glfw {
 
-	static GameEngine game;
+	private static GameEngine game;
+	private static int width = 800;
+	private static int height = 600;
+	private static String gameTitle = "Pseudo3D Game Demo";
 
 	public static void main(String[] args) {
 		try {
-			game = new GameEngine();
+			game = new GameEngine(width, height, gameTitle);
 			game.run();
 		}
 		catch (Exception e) {

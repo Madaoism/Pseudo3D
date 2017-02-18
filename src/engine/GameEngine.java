@@ -53,6 +53,14 @@ public class GameEngine {
 	//private final String fontPath = "assets/ARCADECLASSIC.TTF";
 	
 	private long window;
+	private int width, height;
+	private String gameTitle;
+	
+	public GameEngine(int width, int height, String gameTitle) {
+		this.width = width;
+		this.height = height;
+		this.gameTitle = gameTitle;
+	}
 	
 	public void run() throws Exception{
 		System.out.println("Hello LWJGL" + Version.getVersion() + "!");
@@ -89,7 +97,7 @@ public class GameEngine {
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
 
 		// Create the window
-		window = glfwCreateWindow(800, 600, "Pseudo3D Game Demo", NULL, NULL);
+		window = glfwCreateWindow(width, height, gameTitle, NULL, NULL);
 		if ( window == NULL )
 			throw new RuntimeException("Failed to create the GLFW window");
 
@@ -120,6 +128,7 @@ public class GameEngine {
 
 		// Make the OpenGL context current
 		glfwMakeContextCurrent(window);
+		
 		// Enable v-sync
 		if ( vsyncOn ) {
 			glfwSwapInterval(1);
@@ -159,7 +168,10 @@ public class GameEngine {
 			prev = start;
 			steps += elapsed;
 			
-			keyHandler.update();
+			if (keyHandler.isKeyPressed(keyHandler.KEY_ENTER)) {
+				renderer.randomColor();
+			}
+			
 			glfwSwapBuffers(window); // swap the color buffers
 
 			// Poll for window events. The key callback above will only be

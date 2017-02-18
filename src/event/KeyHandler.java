@@ -13,26 +13,19 @@ public class KeyHandler {
 	private double start = 0;
 	GLFWWindowSizeCallback windowSizeCallback;
 	
+	public final int KEY_ENTER = GLFW_KEY_ENTER;
+	
 	public KeyHandler(long window) { 
 		this.window = window;
 	}
 	
-	public void update() {
-		if (isKeyPressed(GLFW_KEY_ENTER)) {
-			glClearColor((float) Math.random(), 
-					(float) Math.random(),
-					(float) Math.random(),
-					(float) Math.random());
-		}
-	}
-	
 	// Check if a key is being pressed down currently
-	private boolean isKeyHeld( int keyCode ){ 
+	public boolean isKeyHeld( int keyCode ){ 
 		return glfwGetKey(window, keyCode) == GLFW_PRESS;
 	}
 	
 	// Check if a key is being deliberately pressed down
-	private boolean isKeyPressed( int keyCode) {
+	public boolean isKeyPressed( int keyCode) {
 		
 		// temp for checking if key is being held down continuously
 		boolean temp = isPressed;
