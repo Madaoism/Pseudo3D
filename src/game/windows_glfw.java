@@ -9,13 +9,15 @@ import engine.GameEngine;
 public class windows_glfw {
 
 	private static GameEngine game;
+	private static boolean vsyncOn;
 	private static int width = 800;
 	private static int height = 600;
 	private static String gameTitle = "Pseudo3D Game Demo";
 
 	public static void main(String[] args) {
 		try {
-			game = new GameEngine(width, height, gameTitle);
+			vsyncOn = true;
+			game = new GameEngine(width, height, gameTitle, vsyncOn);
 			game.run();
 		}
 		catch (Exception e) {

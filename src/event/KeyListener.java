@@ -5,7 +5,7 @@ import static org.lwjgl.opengl.GL11.glClearColor;
 
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
 
-public class KeyHandler {
+public class KeyListener {
 
 	private long window;
 	private boolean isPressed;
@@ -13,9 +13,9 @@ public class KeyHandler {
 	private double start = 0;
 	GLFWWindowSizeCallback windowSizeCallback;
 	
-	public final int KEY_ENTER = GLFW_KEY_ENTER;
+	public static final int KEY_ENTER = GLFW_KEY_ENTER;
 	
-	public KeyHandler(long window) { 
+	public KeyListener(long window) { 
 		this.window = window;
 	}
 	
@@ -48,6 +48,9 @@ public class KeyHandler {
 			else {
 				return true;
 			}
+		}
+		else {
+			isPressed = false;
 		}
 		
 		return false;
