@@ -17,6 +17,7 @@ public abstract class State {
 	public static final int STATE_BATTLE = 0X105;				// battle state
 	public static final int STATE_PAUSE_BATTLE_MENU = 0x106;	// pause menu state in battle
 	
+	// State constructor
 	public State(long window, EventHandler eventHandler) {
 		this.eventHandler = eventHandler;
 		this.window = window;
